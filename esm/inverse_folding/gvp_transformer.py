@@ -97,9 +97,10 @@ class GVPTransformerModel(nn.Module):
                 sequence recovery and high temperature for higher diversity
             confidence: optional length L list of confidence scores for coordinates
         """
+        device = next(self.parameters()).device
         L = len(coords)
         # Convert to batch format
-        batch_converter = CoordBatchConverter(self.decoder.dictionary)
+        batch_converter = CoordBatchConverter(self.decoder.dictionary, device=device)
         batch_coords, confidence, _, _, padding_mask = (
             batch_converter([(coords, confidence, None)])
         )
