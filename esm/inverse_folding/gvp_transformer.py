@@ -100,14 +100,14 @@ class GVPTransformerModel(nn.Module):
         device = next(self.parameters()).device
         L = len(coords)
         # Convert to batch format
-        batch_converter = CoordBatchConverter(self.decoder.dictionary, device=device)
+        batch_converter = CoordBatchConverter(self.decoder.dictionary)
         batch_coords, confidence, _, _, padding_mask = (
-            batch_converter([(coords, confidence, None)])
+            batch_converter([(coords, confidence, None)], device=device)
         )
         
         # Start with prepend token
         mask_idx = self.decoder.dictionary.get_idx('<mask>')
-        sampled_tokens = torch.full((1, 1+L), mask_idx, dtype=int)
+        sampled_tokens = torch.full((1, 1+L), mask_idx, dtype=int, device=device)
         sampled_tokens[0, 0] = self.decoder.dictionary.get_idx('<cath>')
         if partial_seq is not None:
             for i, c in enumerate(partial_seq):
